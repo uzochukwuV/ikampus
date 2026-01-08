@@ -26,7 +26,58 @@ import { FeatherUserCog2 } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 import { MyLayout } from "../ui/custom/MyLayout";
 
+interface Message {
+  id: number;
+  content: string;
+  role: "user" | "assistant";
+  timestamp: Date;
+}
+
 function ChatGptNewChat2() {
+  const [messages, setMessages] = React.useState<Message[]>([]);
+  const [inputValue, setInputValue] = React.useState("");
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = () => {
+    if (inputValue.trim() === "") return;
+
+    const newMessage: Message = {
+      id: Date.now(),
+      content: inputValue,
+      role: "user",
+      timestamp: new Date(),
+    };
+
+    setMessages([...messages, newMessage]);
+    setInputValue("");
+
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse: Message = {
+        id: Date.now(),
+        content: "Thanks for your message! I'm Ikampus AI, here to help you with your studies and campus life.",
+        role: "assistant",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, aiResponse]);
+    }, 1000);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <MyLayout>
       <div className="flex h-full w-full flex-col items-start">
@@ -164,26 +215,63 @@ function ChatGptNewChat2() {
           </div>
         </div>
         <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-end gap-4 bg-default-background px-6 py-6 overflow-auto">
-          <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-center gap-2 px-2 py-2">
-            <span className="text-heading-1 font-heading-1 text-default-font text-center">
-              Hello Lloyd
-            </span>
-            <span className="text-body font-body text-subtext-color text-center">
-              Make writing more interesting
-            </span>
-          </div>
+          {messages.length === 0 ? (
+            <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-center gap-2 px-2 py-2">
+              <span className="text-heading-1 font-heading-1 text-default-font text-center">
+                Hello Lloyd
+              </span>
+              <span className="text-body font-body text-subtext-color text-center">
+                Make writing more interesting
+              </span>
+            </div>
+          ) : (
+            <div className="flex w-full max-w-[768px] flex-col items-start gap-4 py-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex w-full gap-3 ${
+                    message.role === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {message.role === "assistant" && (
+                    <Avatar size="small">AI</Avatar>
+                  )}
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                      message.role === "user"
+                        ? "bg-brand-600 text-white"
+                        : "bg-neutral-100 text-default-font"
+                    }`}
+                  >
+                    <p className="text-body font-body whitespace-pre-wrap">
+                      {message.content}
+                    </p>
+                  </div>
+                  {message.role === "user" && (
+                    <Avatar
+                      size="small"
+                      image="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/fychrij7dzl8wgq2zjq9.avif"
+                    >
+                      LP
+                    </Avatar>
+                  )}
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
 
-
-<div className="flex w-full flex-col items-center justify-center gap-7">
+          <div className="flex w-full flex-col items-center justify-center gap-7">
             <div className="flex w-full max-w-[768px] flex-col items-start rounded-lg bg-neutral-100 px-3 py-2">
               <div className="flex w-full flex-col items-start gap-2 px-2 py-2">
                 <TextFieldUnstyled className="h-auto w-full flex-none">
                   <TextFieldUnstyled.Input
                     placeholder="Message Ikampus..."
-                    value=""
-                    onChange={(
-                      event: React.ChangeEvent<HTMLInputElement>
-                    ) => {}}
+                    value={inputValue}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      setInputValue(event.target.value)
+                    }
+                    onKeyDown={handleKeyDown}
                   />
                 </TextFieldUnstyled>
               </div>
@@ -226,7 +314,8 @@ function ChatGptNewChat2() {
                 <IconButton
                   variant="brand-primary"
                   icon={<FeatherArrowUp />}
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={handleSendMessage}
+                  disabled={inputValue.trim() === ""}
                 />
               </div>
             </div>
