@@ -29,10 +29,8 @@ interface DefaultPageLayoutRootProps
   className?: string;
 }
 
-const DefaultPageLayoutRoot = React.forwardRef<
-  HTMLDivElement,
-  DefaultPageLayoutRootProps
->(function DefaultPageLayoutRoot(
+const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayoutRootProps>(
+  function DefaultPageLayoutRoot(
   { children, className, ...otherProps }: DefaultPageLayoutRootProps,
   ref
 ) {
@@ -74,92 +72,95 @@ const DefaultPageLayoutRoot = React.forwardRef<
         {!isCollapsed ? (
           <>
             {/* Header with user profile */}
-            <div className="flex flex-col gap-6 p-6 border-b border-neutral-200">
-          {/* User info section */}
-          <div className="flex items-start gap-3">
-            <button className="ml-auto p-1 hover:bg-neutral-100 rounded">
-                  <svg
-                    className="w-4 h-4 text-neutral-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                        />
-                  </svg>
+            <div className="flex flex-col gap-5 p-6 border-b border-neutral-200">
+              {/* Profile name and info - Moved to top */}
+              <div>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-[16px] font-semibold text-neutral-900 leading-tight">
+                      Lloyd Percy
+                    </h2>
+                    <p className="text-[13px] text-neutral-400 mt-1">
+                      Digital Marketing · Year 2
+                    </p>
+                    <p className="text-[11px] text-neutral-400 mt-0.5">
+                      NG · iKampus
+                    </p>
+                  </div>
+                  
+                  {/* Three dots menu */}
+                  <button className="p-1 hover:bg-neutral-100 rounded transition-colors">
+                    <svg
+                      className="w-4 h-4 text-neutral-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex gap-2">
+                <button className="px-3 py-1.5 text-[13px] font-medium text-white bg-blue-600 rounded-full">
+                  Overview
+                </button>
+                <button className="px-3 py-1.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 rounded-full transition-colors">
+                  Campus
+                </button>
+                <button className="px-3 py-1.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 rounded-full transition-colors">
+                  Startups
                 </button>
               </div>
 
-              <div className="flex flex-col gap-4">
-                {/* Profile name and info */}
-                <div>
-                  <h2 className="text-[15px] font-semibold text-neutral-900 leading-tight">
-                Lloyd Percy
-              </h2>
-                  <p className="text-[13px] text-neutral-500 mt-0.5">
-                    Digital Marketing · Year 2
+              {/* Profile images */}
+              <div className="flex gap-2">
+                <div className="w-[110px] h-[110px] rounded-xl overflow-hidden">
+                  <img
+                    src="https://res.cloudinary.com/subframe/image/upload/v1711417513/shared/kwut7rhuyivweg8tmyzl.jpg"
+                    alt="Profile 1"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="w-[110px] h-[110px] rounded-xl overflow-hidden bg-cyan-400">
+                  <div className="w-full h-full" />
+                </div>
+              </div>
+
+              {/* Course and Year cards - Side by side */}
+              <div className="flex gap-2">
+                {/* Course card */}
+                <div className="flex-1 bg-neutral-50 rounded-lg p-3">
+                  <p className="text-[10px] text-neutral-400 uppercase tracking-wide mb-1.5">
+                    Course
+                  </p>
+                  <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
+                    Digital Marketing
                   </p>
                 </div>
 
-                {/* Tabs */}
-                <div className="flex gap-2">
-                  <button className="px-3 py-1.5 text-[13px] font-medium text-white bg-blue-600 rounded-full">
-                Overview
-              </button>
-                  <button className="px-3 py-1.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 rounded-full">
-                    Campus
-                  </button>
-                  <button className="px-3 py-1.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 rounded-full">
-                    Startups
-                  </button>
+                {/* Year card */}
+                <div className="flex-1 bg-neutral-50 rounded-lg p-3">
+                  <p className="text-[10px] text-neutral-400 uppercase tracking-wide mb-1.5">
+                    Year
+                  </p>
+                  <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
+                    Year 2 · <span className="text-neutral-400 font-medium">NG</span>
+                  </p>
                 </div>
-
-                {/* Profile images */}
-                <div className="flex gap-2">
-                  <div className="w-[90px] h-[90px] rounded-lg overflow-hidden">
-                    <img 
-                      src="https://res.cloudinary.com/subframe/image/upload/v1711417513/shared/kwut7rhuyivweg8tmyzl.jpg"
-                      alt="Profile 1"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="w-[90px] h-[90px] rounded-lg overflow-hidden bg-cyan-400">
-                    <div className="w-full h-full" />
-                  </div>
-                </div>
-
-                {/* Course info card */}
-                <div className="bg-neutral-50 rounded-lg p-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="text-[11px] text-neutral-500 uppercase tracking-wide">
-                        Course
-                      </p>
-                      <p className="text-[13px] font-semibold text-neutral-900 mt-0.5">
-                        Digital Marketing
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[11px] text-neutral-500 uppercase tracking-wide">
-                        Year
-                      </p>
-                      <p className="text-[13px] font-semibold text-neutral-900 mt-0.5">
-                        Year 2 · <span className="text-neutral-500">NiD</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-[13px] text-neutral-500 leading-relaxed">
-                  Campus creator, digital storyteller, and community builder at
-                  iKampus. Always exploring new projects and collabs.
-                </p>
               </div>
+
+              {/* Description */}
+              <p className="text-[13px] text-neutral-400 leading-[1.6]">
+                Campus creator, digital storyteller and community builder at iKampus. Always exploring new projects and collabs.
+              </p>
             </div>
 
             {/* Action items */}
