@@ -23,6 +23,7 @@ import { FeatherPaperclip } from "@subframe/core";
 import { FeatherSettings } from "@subframe/core";
 import { FeatherSparkles } from "@subframe/core";
 import { FeatherUserCog2 } from "@subframe/core";
+import { FeatherMic } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 import { MyLayout } from "../ui/custom/MyLayout";
 
@@ -63,7 +64,8 @@ function ChatGptNewChat2() {
     setTimeout(() => {
       const aiResponse: Message = {
         id: Date.now(),
-        content: "Thanks for your message! I'm Ikampus AI, here to help you with your studies and campus life.",
+        content:
+          "Thanks for your message! I'm Ikampus AI, here to help you with your studies and campus life.",
         role: "assistant",
         timestamp: new Date(),
       };
@@ -80,151 +82,56 @@ function ChatGptNewChat2() {
 
   return (
     <MyLayout>
-      <div className="flex h-full w-full flex-col items-start">
-        <div className="flex w-full items-center justify-between px-3 py-3">
-          <SubframeCore.Popover.Root>
-            <SubframeCore.Popover.Trigger asChild={true}>
-              <ChatSelect>University Of Northampton</ChatSelect>
-            </SubframeCore.Popover.Trigger>
-            <SubframeCore.Popover.Portal>
-              <SubframeCore.Popover.Content
-                side="bottom"
-                align="start"
-                sideOffset={4}
-                asChild={true}
+      <div className="flex h-full w-full flex-col items-start bg-white">
+        {/* Top Navigation Bar */}
+        <div className="flex w-full items-center justify-between border-b border-neutral-200 px-6 py-3">
+          {/* Left side - iKampus logo and name */}
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600">
+              <span className="text-[14px] font-semibold text-white">ik</span>
+            </div>
+            <span className="text-[15px] font-semibold text-neutral-900">
+              iKampus
+            </span>
+          </div>
+
+          {/* Right side - Icons */}
+          <div className="flex items-center gap-4">
+            {/* History/Clock icon */}
+            <button className="p-2 hover:bg-neutral-100 rounded-lg transition-colors">
+              <svg
+                className="w-5 h-5 text-neutral-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <div className="flex w-80 flex-none flex-col items-start gap-1 rounded-md border border-solid border-neutral-border bg-default-background py-2 shadow-lg">
-                  <div className="flex w-full items-center gap-2 px-5 pt-2 pb-1">
-                    <span className="grow shrink-0 basis-0 text-caption font-caption text-subtext-color">
-                      Model
-                    </span>
-                    <SubframeCore.Tooltip.Provider>
-                      <SubframeCore.Tooltip.Root>
-                        <SubframeCore.Tooltip.Trigger asChild={true}>
-                          <FeatherInfo className="text-body font-body text-neutral-400" />
-                        </SubframeCore.Tooltip.Trigger>
-                        <SubframeCore.Tooltip.Portal>
-                          <SubframeCore.Tooltip.Content
-                            side="top"
-                            align="center"
-                            sideOffset={4}
-                            asChild={true}
-                          >
-                            <Tooltip>Learn more about models</Tooltip>
-                          </SubframeCore.Tooltip.Content>
-                        </SubframeCore.Tooltip.Portal>
-                      </SubframeCore.Tooltip.Root>
-                    </SubframeCore.Tooltip.Provider>
-                  </div>
-                  <div className="flex w-full flex-col items-start gap-1 px-2">
-                    <ChatSelectItem
-                      title="GPT-4o"
-                      subtitle="Great for most tasks"
-                    />
-                    <ChatSelectItem
-                      title="o1"
-                      subtitle="Uses advanced reasoning"
-                      selected={true}
-                    />
-                    <ChatSelectItem
-                      title="o1-mini"
-                      subtitle="Faster at reasoning"
-                    />
-                  </div>
-                  <div className="flex w-full flex-col items-start gap-1 px-5 py-1">
-                    <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-border" />
-                  </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </button>
 
-
-<div className="flex w-full items-start gap-4 px-5 py-3">
-                    <FeatherMessageCircle className="text-heading-2 font-heading-2 text-subtext-color" />
-                    <span className="grow shrink-0 basis-0 text-body font-body text-default-font">
-                      Temporary chat
-                    </span>
-                    <Switch
-                      checked={false}
-                      onCheckedChange={(checked: boolean) => {}}
-                    />
-                  </div>
-                </div>
-              </SubframeCore.Popover.Content>
-            </SubframeCore.Popover.Portal>
-          </SubframeCore.Popover.Root>
-          <div className="flex items-center justify-end gap-6 px-2 py-2">
-            <FeatherMessageCircle className="text-heading-1 font-heading-1 text-default-font" />
-            <SubframeCore.DropdownMenu.Root>
-              <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                <Avatar image="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/fychrij7dzl8wgq2zjq9.avif">
-                  A
-                </Avatar>
-              </SubframeCore.DropdownMenu.Trigger>
-              <SubframeCore.DropdownMenu.Portal>
-                <SubframeCore.DropdownMenu.Content
-                  side="bottom"
-                  align="end"
-                  sideOffset={4}
-                  asChild={true}
-                >
-                  <DropdownMenu className="h-auto w-64 flex-none">
-                    <DropdownMenu.DropdownItem
-                      className="h-10 w-full flex-none"
-                      icon={<FeatherUserCog2 />}
-                    >
-                      My GPTs
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem
-                      className="h-10 w-full flex-none"
-                      icon={<FeatherBook />}
-                    >
-                      Customize ChatGPT
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem
-                      className="h-10 w-full flex-none"
-                      icon={<FeatherSettings />}
-                    >
-                      Settings
-                    </DropdownMenu.DropdownItem>
-                    <div className="flex w-full flex-col items-start px-2 py-2">
-                      <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-border" />
-                    </div>
-                    <DropdownMenu.DropdownItem
-                      className="h-10 w-full flex-none"
-                      icon={<FeatherLaptop />}
-                    >
-                      Download the macOS app
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem
-                      className="h-10 w-full flex-none"
-                      icon={<FeatherSparkles />}
-                    >
-                      Upgrade plan
-                    </DropdownMenu.DropdownItem>
-                    <div className="flex w-full flex-col items-start px-2 py-2">
-                      <div className="flex h-px w-full flex-none flex-col items-center gap-2 bg-neutral-border" />
-                    </div>
-                    <DropdownMenu.DropdownItem
-                      className="h-10 w-full flex-none"
-                      icon={<FeatherLogOut />}
-                    >
-                      Log out
-                    </DropdownMenu.DropdownItem>
-                  </DropdownMenu>
-                </SubframeCore.DropdownMenu.Content>
-              </SubframeCore.DropdownMenu.Portal>
-            </SubframeCore.DropdownMenu.Root>
+            {/* Message/Chat icon */}
+            <button className="p-2 hover:bg-neutral-100 rounded-lg transition-colors">
+              <FeatherMessageCircle className="w-5 h-5 text-neutral-600" />
+            </button>
           </div>
         </div>
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-end gap-4 bg-default-background px-6 py-6 overflow-auto">
+
+        {/* Main Content Area */}
+        <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-center bg-white px-6 py-8 overflow-auto">
           {messages.length === 0 ? (
-            <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-center gap-2 px-2 py-2">
-              <span className="text-heading-1 font-heading-1 text-default-font text-center">
-                Hello Lloyd
-              </span>
-              <span className="text-body font-body text-subtext-color text-center">
-                Make writing more interesting
-              </span>
+            /* Empty State - Centered Greeting */
+            <div className="flex w-full max-w-[800px] grow shrink-0 basis-0 flex-col items-center justify-center gap-3">
+              <h1 className="text-[32px] font-normal text-neutral-900">
+                Hello, Loyd
+              </h1>
             </div>
           ) : (
+            /* Messages Area */
             <div className="flex w-full max-w-[768px] flex-col items-start gap-4 py-4">
               {messages.map((message) => (
                 <div
@@ -261,68 +168,67 @@ function ChatGptNewChat2() {
             </div>
           )}
 
-          <div className="flex w-full flex-col items-center justify-center gap-7">
-            <div className="flex w-full max-w-[768px] flex-col items-start rounded-lg bg-neutral-100 px-3 py-2">
-              <div className="flex w-full flex-col items-start gap-2 px-2 py-2">
-                <TextFieldUnstyled className="h-auto w-full flex-none">
-                  <TextFieldUnstyled.Input
-                    placeholder="Message Ikampus..."
-                    value={inputValue}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      setInputValue(event.target.value)
-                    }
-                    onKeyDown={handleKeyDown}
-                  />
-                </TextFieldUnstyled>
-              </div>
-              <div className="flex w-full items-start gap-2">
-                <div className="flex grow shrink-0 basis-0 items-start gap-1">
-                  <SubframeCore.DropdownMenu.Root>
-                    <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                      <IconButton
-                        icon={<FeatherPaperclip />}
-                        onClick={(
-                          event: React.MouseEvent<HTMLButtonElement>
-                        ) => {}}
-                      />
-                    </SubframeCore.DropdownMenu.Trigger>
-                    <SubframeCore.DropdownMenu.Portal>
-                      <SubframeCore.DropdownMenu.Content
-                        side="bottom"
-                        align="start"
-                        sideOffset={4}
-                        asChild={true}
-                      >
-                        <DropdownMenu>
-                          <DropdownMenu.DropdownItem icon={<FeatherCloud />}>
-                            Connect to Google Drive
-                          </DropdownMenu.DropdownItem>
-                          <DropdownMenu.DropdownItem
-                            icon={<FeatherFilePlus2 />}
-                          >
-                            Upload from computer
-                          </DropdownMenu.DropdownItem>
-                        </DropdownMenu>
-                      </SubframeCore.DropdownMenu.Content>
-                    </SubframeCore.DropdownMenu.Portal>
-                  </SubframeCore.DropdownMenu.Root>
-                  <IconButton
-                    icon={<FeatherGlobe />}
-                    onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                  />
-                </div>
-                <IconButton
-                  variant="brand-primary"
-                  icon={<FeatherArrowUp />}
+          {/* Input Area - Fixed at bottom */}
+          <div className="flex w-full max-w-[800px] flex-col items-center justify-center gap-4 mt-auto">
+            {/* Input Box */}
+            <div className="flex w-full flex-col items-start rounded-[24px] bg-neutral-100 shadow-sm">
+              <div className="flex w-full items-center gap-3 px-4 py-3">
+                {/* Attachment Icon */}
+                <button className="flex-shrink-0 p-1 hover:bg-neutral-200 rounded-lg transition-colors">
+                  <svg
+                    className="w-5 h-5 text-neutral-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                    />
+                  </svg>
+                </button>
+
+                {/* Text Input */}
+                <input
+                  type="text"
+                  placeholder="Message iKampus AI..."
+                  value={inputValue}
+                  onChange={(event) => setInputValue(event.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="flex-1 bg-transparent text-[15px] text-neutral-900 placeholder:text-neutral-500 outline-none border-none"
+                />
+
+                {/* Voice Icon */}
+                <button className="flex-shrink-0 p-1 hover:bg-neutral-200 rounded-lg transition-colors">
+                  <FeatherMic className="w-5 h-5 text-neutral-600" />
+                </button>
+
+                {/* Send Button */}
+                <button
                   onClick={handleSendMessage}
                   disabled={inputValue.trim() === ""}
-                />
+                  className={`flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full transition-all ${
+                    inputValue.trim() === ""
+                      ? "bg-neutral-300 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700"
+                  }`}
+                >
+                  <FeatherArrowUp
+                    className={`w-5 h-5 ${
+                      inputValue.trim() === ""
+                        ? "text-neutral-500"
+                        : "text-white"
+                    }`}
+                  />
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </MyLayout >
+    </MyLayout>
   );
 }
 
