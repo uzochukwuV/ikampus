@@ -74,18 +74,70 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
             {/* Header with user profile */}
             <div className="flex flex-col gap-5 p-6 border-b border-neutral-200">
               {/* Profile name and info - Moved to top */}
-              <div>
+            
+
+              {/* Tabs */}
+              {/* <div className="flex gap-2">
+                <button className="px-3 py-1.5 text-[13px] font-medium text-white bg-blue-600 rounded-full">
+                  Overview
+                </button>
+                <button className="px-3 py-1.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 rounded-full transition-colors">
+                  Campus
+                </button>
+                <button className="px-3 py-1.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 rounded-full transition-colors">
+                  Startups
+                </button>
+              </div> */}
+
+              {/* Profile images */}
+              <div className="flex gap-2">
+                <div className="w-[110px] h-[110px] rounded-xl overflow-hidden">
+                  <img
+                    src="https://res.cloudinary.com/subframe/image/upload/v1711417513/shared/kwut7rhuyivweg8tmyzl.jpg"
+                    alt="Profile 1"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* <div className="w-[110px] h-[110px] rounded-xl overflow-hidden bg-cyan-400">
+                  <div className="w-full h-full" />
+                </div> */}
+              </div>
+
+              {/* Course and Year cards - Side by side */}
+              <div className="flex gap-2">
+                {/* Course card */}
+                {/* <div className="flex-1 bg-neutral-50 rounded-lg p-3">
+                  <p className="text-[10px] text-neutral-400 uppercase tracking-wide mb-1.5">
+                    Course
+                  </p>
+                  <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
+                    Digital Marketing
+                  </p>
+                </div> */}
+
+                {/* Year card */}
+                {/* <div className="flex-1 bg-neutral-50 rounded-lg p-3">
+                  <p className="text-[10px] text-neutral-400 uppercase tracking-wide mb-1.5">
+                    Year
+                  </p>
+                  <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
+                    Year 2 · <span className="text-neutral-400 font-medium">NG</span>
+                  </p>
+                </div> */}
+              </div>
+
+                <div>
                 <div className="flex items-start justify-between">
                   <div>
                     <h2 className="text-[16px] font-semibold text-neutral-900 leading-tight">
                       Lloyd Percy
                     </h2>
-                    <p className="text-[13px] text-neutral-400 mt-1">
+                    {/* <p className="text-[13px] text-neutral-400 mt-1">
                       Digital Marketing · Year 2
                     </p>
                     <p className="text-[11px] text-neutral-400 mt-0.5">
                       NG · iKampus
-                    </p>
+                    </p> */}
                   </div>
                   
                   {/* Three dots menu */}
@@ -104,56 +156,6 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
                       />
                     </svg>
                   </button>
-                </div>
-              </div>
-
-              {/* Tabs */}
-              <div className="flex gap-2">
-                <button className="px-3 py-1.5 text-[13px] font-medium text-white bg-blue-600 rounded-full">
-                  Overview
-                </button>
-                <button className="px-3 py-1.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 rounded-full transition-colors">
-                  Campus
-                </button>
-                <button className="px-3 py-1.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 rounded-full transition-colors">
-                  Startups
-                </button>
-              </div>
-
-              {/* Profile images */}
-              <div className="flex gap-2">
-                <div className="w-[110px] h-[110px] rounded-xl overflow-hidden">
-                  <img
-                    src="https://res.cloudinary.com/subframe/image/upload/v1711417513/shared/kwut7rhuyivweg8tmyzl.jpg"
-                    alt="Profile 1"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="w-[110px] h-[110px] rounded-xl overflow-hidden bg-cyan-400">
-                  <div className="w-full h-full" />
-                </div>
-              </div>
-
-              {/* Course and Year cards - Side by side */}
-              <div className="flex gap-2">
-                {/* Course card */}
-                <div className="flex-1 bg-neutral-50 rounded-lg p-3">
-                  <p className="text-[10px] text-neutral-400 uppercase tracking-wide mb-1.5">
-                    Course
-                  </p>
-                  <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
-                    Digital Marketing
-                  </p>
-                </div>
-
-                {/* Year card */}
-                <div className="flex-1 bg-neutral-50 rounded-lg p-3">
-                  <p className="text-[10px] text-neutral-400 uppercase tracking-wide mb-1.5">
-                    Year
-                  </p>
-                  <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
-                    Year 2 · <span className="text-neutral-400 font-medium">NG</span>
-                  </p>
                 </div>
               </div>
 
@@ -178,7 +180,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
 
                 <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
                   <FeatherFolder className="w-[18px] h-[18px] text-neutral-600" />
-                  <span>Add Project</span>
+                  <span>Add Modules</span>
                 </button>
 
                 <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
@@ -188,7 +190,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
 
                 <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
                   <FeatherClock className="w-[18px] h-[18px] text-neutral-600" />
-                  <span>Add Timeline</span>
+                  <span>Add Note</span>
                 </button>
               </div>
             </div>

@@ -125,9 +125,9 @@ function ChatGptNewChat2() {
         <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-center bg-white px-6 py-8 overflow-auto">
           {messages.length === 0 ? (
             /* Empty State - Centered Greeting */
-            <div className="flex w-full max-w-[800px] grow shrink-0 basis-0 flex-col items-center justify-center gap-3">
-              <h1 className="text-[32px] font-normal text-neutral-900">
-                Hello, Loyd
+            <div className="flex w-full max-w-[800px] grow shrink-0 basis-0 flex-col items-center justify-center gap-3 pb-44">
+              <h1 className="text-[42px] font-normal text-neutral-900">
+                Hello, Llyold
               </h1>
             </div>
           ) : (
