@@ -15,6 +15,8 @@ import { FeatherCalendar } from "@subframe/core";
 import { FeatherClock } from "@subframe/core";
 import { FeatherChevronLeft } from "@subframe/core";
 import { FeatherChevronRight } from "@subframe/core";
+import { FeatherMenu } from "@subframe/core";
+import { FeatherChevronDown } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 import { Avatar } from "../components/Avatar";
 import { DropdownMenu } from "../components/DropdownMenu";
@@ -35,9 +37,14 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
   ref
 ) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [expandedModules, setExpandedModules] = useState(false);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const toggleModules = () => {
+    setExpandedModules(!expandedModules);
   };
   return (
     <div
@@ -55,14 +62,14 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
         }`}
       >
         {/* Collapse/Expand Button */}
-        <div className="flex justify-end p-3 border-b border-neutral-200">
+        <div className="flex justify-center p-3 border-b border-neutral-200">
           <button
             onClick={toggleSidebar}
             className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? (
-              <FeatherChevronRight className="w-5 h-5 text-neutral-600" />
+              <FeatherMenu className="w-5 h-5 text-neutral-600" />
             ) : (
               <FeatherChevronLeft className="w-5 h-5 text-neutral-600" />
             )}
@@ -91,7 +98,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
 
               {/* Profile images */}
               <div className="flex gap-2">
-                <div className="w-[110px] h-[110px] rounded-xl overflow-hidden">
+                <div className="w-[90%] aspect-square rounded-xl overflow-hidden">
                   <img
                     src="https://res.cloudinary.com/subframe/image/upload/v1711417513/shared/kwut7rhuyivweg8tmyzl.jpg"
                     alt="Profile 1"
@@ -103,28 +110,6 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
                 </div> */}
               </div>
 
-              {/* Course and Year cards - Side by side */}
-              <div className="flex gap-2">
-                {/* Course card */}
-                {/* <div className="flex-1 bg-neutral-50 rounded-lg p-3">
-                  <p className="text-[10px] text-neutral-400 uppercase tracking-wide mb-1.5">
-                    Course
-                  </p>
-                  <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
-                    Digital Marketing
-                  </p>
-                </div> */}
-
-                {/* Year card */}
-                {/* <div className="flex-1 bg-neutral-50 rounded-lg p-3">
-                  <p className="text-[10px] text-neutral-400 uppercase tracking-wide mb-1.5">
-                    Year
-                  </p>
-                  <p className="text-[14px] font-semibold text-neutral-900 leading-tight">
-                    Year 2 · <span className="text-neutral-400 font-medium">NG</span>
-                  </p>
-                </div> */}
-              </div>
 
                 <div>
                 <div className="flex items-start justify-between">
@@ -161,7 +146,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
 
               {/* Description */}
               <p className="text-[13px] text-neutral-400 leading-[1.6]">
-                Campus creator, digital storyteller and community builder at iKampus. Always exploring new projects and collabs.
+                Campus creator, digital storyteller and community builder at iKampus. 
               </p>
             </div>
 
@@ -178,10 +163,39 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
                   <span>Add Group</span>
                 </button>
 
-                <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
-                  <FeatherFolder className="w-[18px] h-[18px] text-neutral-600" />
-                  <span>Add Modules</span>
-                </button>
+                {/* Add Modules with submenu */}
+                <div>
+                  <button 
+                    onClick={toggleModules}
+                    className="flex items-center justify-between w-full gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <FeatherFolder className="w-[18px] h-[18px] text-neutral-600" />
+                      <span>Add Modules</span>
+                    </div>
+                    <FeatherChevronDown 
+                      className={`w-4 h-4 text-neutral-600 transition-transform ${expandedModules ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+
+                  {/* Submenu items */}
+                  {expandedModules && (
+                    <div className="flex flex-col gap-0.5 mt-1 pl-6">
+                      <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors text-left">
+                        <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
+                        <span>MKT2006W1</span>
+                      </button>
+                      <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors text-left">
+                        <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
+                        <span>MKT2050W</span>
+                      </button>
+                      <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors text-left">
+                        <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
+                        <span>MKT2011W</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
 
                 <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
                   <FeatherCalendar className="w-[18px] h-[18px] text-neutral-600" />
@@ -196,44 +210,9 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
             </div>
           </>
         ) : (
-          /* Collapsed state - show only icons */
-          <div className="flex-1 p-2 mt-4">
-            <div className="flex flex-col gap-2 items-center">
-              <button
-                className="p-3 hover:bg-neutral-100 rounded-lg transition-colors w-full flex justify-center"
-                title="Add New"
-              >
-                <FeatherPlusCircle className="w-5 h-5 text-neutral-600" />
-              </button>
-
-              <button
-                className="p-3 hover:bg-neutral-100 rounded-lg transition-colors w-full flex justify-center"
-                title="Add Group"
-              >
-                <FeatherUsers className="w-5 h-5 text-neutral-600" />
-              </button>
-
-              <button
-                className="p-3 hover:bg-neutral-100 rounded-lg transition-colors w-full flex justify-center"
-                title="Add Project"
-              >
-                <FeatherFolder className="w-5 h-5 text-neutral-600" />
-              </button>
-
-              <button
-                className="p-3 hover:bg-neutral-100 rounded-lg transition-colors w-full flex justify-center"
-                title="Add Calendar"
-              >
-                <FeatherCalendar className="w-5 h-5 text-neutral-600" />
-              </button>
-
-              <button
-                className="p-3 hover:bg-neutral-100 rounded-lg transition-colors w-full flex justify-center"
-                title="Add Timeline"
-              >
-                <FeatherClock className="w-5 h-5 text-neutral-600" />
-              </button>
-            </div>
+          /* Collapsed state - show only menu icon at top */
+          <div className="flex-1 flex items-start justify-center pt-4">
+            {/* Content is hidden when collapsed */}
           </div>
         )}
       </div>
