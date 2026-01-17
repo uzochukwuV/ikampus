@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Avatar } from "@/ui/components/Avatar";
 import { ChatSelect } from "@/ui/components/ChatSelect";
 import { ChatSelectItem } from "@/ui/components/ChatSelectItem";
@@ -39,9 +39,21 @@ interface Message {
 
 function ChatGptNewChat2() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [inputValue, setInputValue] = React.useState("");
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  // Reset messages when "new" parameter is in URL
+  React.useEffect(() => {
+    const isNewChat = searchParams.get("new") === "true";
+    if (isNewChat) {
+      setMessages([]);
+      setInputValue("");
+      // Remove the query parameter from URL
+      router.replace("/");
+    }
+  }, [searchParams, router]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

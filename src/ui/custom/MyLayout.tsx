@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FeatherBarChart2 } from "@subframe/core";
 import { FeatherChevronsUpDown } from "@subframe/core";
 import { FeatherHome } from "@subframe/core";
@@ -36,6 +37,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
   { children, className, ...otherProps }: DefaultPageLayoutRootProps,
   ref
 ) {
+  const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedModules, setExpandedModules] = useState(false);
 
@@ -153,7 +155,10 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
             {/* Action items */}
             <div className="flex-1 p-4">
               <div className="flex flex-col gap-1">
-                <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                <button 
+                  onClick={() => router.push("/?new=true")}
+                  className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                >
                   <FeatherPlusCircle className="w-[18px] h-[18px] text-neutral-600" />
                   <span>Add New</span>
                 </button>
