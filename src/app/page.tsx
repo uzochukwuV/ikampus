@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Avatar } from "@/ui/components/Avatar";
 import { ChatSelect } from "@/ui/components/ChatSelect";
 import { ChatSelectItem } from "@/ui/components/ChatSelectItem";
@@ -35,6 +36,7 @@ interface Message {
 }
 
 function ChatGptNewChat2() {
+  const router = useRouter();
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [inputValue, setInputValue] = React.useState("");
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
@@ -115,7 +117,10 @@ function ChatGptNewChat2() {
             </button>
 
             {/* Message/Chat icon */}
-            <button className="p-2 hover:bg-neutral-100 rounded-lg transition-colors">
+            <button 
+              onClick={() => router.push("/messages")}
+              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+            >
               <FeatherMessageCircle className="w-5 h-5 text-neutral-600" />
             </button>
           </div>
