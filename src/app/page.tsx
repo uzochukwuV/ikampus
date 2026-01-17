@@ -27,6 +27,8 @@ import { FeatherUserCog2 } from "@subframe/core";
 import { FeatherMic } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 import { MyLayout } from "../ui/custom/MyLayout";
+import Image from "next/image";
+import ikampusLogo from "../assets/images/iwhite.jpg";
 
 interface Message {
   id: number;
@@ -89,8 +91,14 @@ function ChatGptNewChat2() {
         <div className="flex w-full items-center justify-between border-b border-neutral-200 px-6 py-3">
           {/* Left side - iKampus logo and name */}
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600">
-              <span className="text-[14px] font-semibold text-white">ik</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden bg-white">
+              <Image 
+                src={ikampusLogo}
+                alt="iKampus Logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-[15px] font-semibold text-neutral-900">
               iKampus
