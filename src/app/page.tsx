@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Avatar } from "@/ui/components/Avatar";
 import { ChatSelect } from "@/ui/components/ChatSelect";
@@ -257,4 +257,12 @@ function ChatGptNewChat2() {
   );
 }
 
-export default ChatGptNewChat2;
+function ChatGptNewChatWrapper() {
+  return (
+    <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
+      <ChatGptNewChat2 />
+    </Suspense>
+  );
+}
+
+export default ChatGptNewChatWrapper;

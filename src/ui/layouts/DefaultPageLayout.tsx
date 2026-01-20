@@ -8,6 +8,7 @@
  */
 
 import React from "react";
+import Image from "next/image";
 import { FeatherBarChart2 } from "@subframe/core";
 import { FeatherBell } from "@subframe/core";
 import { FeatherHome } from "@subframe/core";
@@ -46,9 +47,12 @@ const DefaultPageLayoutRoot = React.forwardRef<
       <SidebarRailWithLabels
         header={
           <div className="flex flex-col items-center justify-center gap-2 px-1 py-1">
-            <img
+            <Image
               className="h-6 w-6 flex-none object-cover"
               src="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/y2rsnhq3mex4auk54aye.png"
+              alt="Sidebar logo"
+              width={24}
+              height={24}
             />
           </div>
         }

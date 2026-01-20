@@ -101,9 +101,11 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
               {/* Profile images */}
               <div className="flex gap-2">
                 <div className="w-[90%] aspect-square rounded-xl overflow-hidden">
-                  <img
+                  <Image
                     src="https://res.cloudinary.com/subframe/image/upload/v1711417513/shared/kwut7rhuyivweg8tmyzl.jpg"
                     alt="Profile 1"
+                    width={256}
+                    height={256}
                     className="w-full h-full object-cover"
                   />
                 </div>

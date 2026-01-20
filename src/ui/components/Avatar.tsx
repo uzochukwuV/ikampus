@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import Image from "next/image";
 import * as SubframeUtils from "../utils";
 
 interface AvatarRootProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -71,7 +72,7 @@ const AvatarRoot = React.forwardRef<HTMLDivElement, AvatarRootProps>(
           </span>
         ) : null}
         {image ? (
-          <img
+          <Image
             className={SubframeUtils.twClassNames(
               "h-8 w-8 flex-none object-cover absolute",
               {
@@ -82,6 +83,9 @@ const AvatarRoot = React.forwardRef<HTMLDivElement, AvatarRootProps>(
               }
             )}
             src={image}
+            alt="Avatar image"
+            width={32}
+            height={32}
           />
         ) : null}
       </div>
