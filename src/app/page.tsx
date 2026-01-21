@@ -112,8 +112,8 @@ function ChatGptNewChat2() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <span className="text-[15px] font-semibold text-neutral-900">
-              iKampus
+            <span className="text-[15px] font-semibold text-neutral-900" style={{ fontFamily: '"Source Code Variable", monospace' }}>
+                IKAMPUS
             </span>
           </div>
 
@@ -150,9 +150,9 @@ function ChatGptNewChat2() {
         <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-center bg-white px-6 py-8 overflow-auto">
           {messages.length === 0 ? (
             /* Empty State - Centered Greeting */
-            <div className="flex w-full max-w-[800px] grow shrink-0 basis-0 flex-col items-center justify-center gap-3 pb-44">
-              <h1 className="text-[42px] font-normal text-neutral-900">
-                Hello, Llyold
+            <div className="flex w-full max-w-[800px] grow shrink-0 basis-0 flex-col items-center justify-center gap-3 pb-34">
+              <h1 className="text-[52px] text-neutral-900" style={{ fontFamily: 'cursive' }}>
+                Hello, Lloyd 
               </h1>
             </div>
           ) : (

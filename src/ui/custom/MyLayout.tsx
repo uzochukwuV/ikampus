@@ -18,6 +18,7 @@ import { FeatherChevronLeft } from "@subframe/core";
 import { FeatherChevronRight } from "@subframe/core";
 import { FeatherMenu } from "@subframe/core";
 import { FeatherChevronDown } from "@subframe/core";
+import { FeatherFlag } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 import { Avatar } from "../components/Avatar";
 import { DropdownMenu } from "../components/DropdownMenu";
@@ -25,6 +26,7 @@ import { SidebarCollapsible } from "../components/SidebarCollapsible";
 import * as SubframeUtils from "../utils";
 import Image from "next/image";
 import ikampusLogo from "../../assets/images/iwhite.jpg";
+
 
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -40,6 +42,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedModules, setExpandedModules] = useState(false);
+  const [isExpandedBio, setIsExpandedBio] = useState(false);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -121,12 +124,18 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
                     <h2 className="text-[16px] font-semibold text-neutral-900 leading-tight">
                       Lloyd Percy
                     </h2>
-                    {/* <p className="text-[13px] text-neutral-400 mt-1">
-                      Digital Marketing · Year 2
-                    </p>
-                    <p className="text-[11px] text-neutral-400 mt-0.5">
-                      NG · iKampus
-                    </p> */}
+                   <p className="text-[12px] text-neutral-900 leading-tight flex items-center gap-1"> Digital Marketing | UON 
+                     <svg className="w-6 h-6" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                       <rect width="60" height="30" fill="#012169"/>
+                       <path d="M0,0 L60,30 M60,0 L0,30" stroke="white" strokeWidth="6"/>
+                       <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="4" clipPath="polygon(0 0, 60 0, 60 30, 0 30)"/>
+                       <rect y="12" width="60" height="6" fill="white"/>
+                       <rect x="24" width="12" height="30" fill="white"/>
+                       <rect y="12" width="60" height="4" fill="#C8102E"/>
+                       <rect x="26" width="8" height="30" fill="#C8102E"/>
+                     </svg>
+                   </p>
+                  
                   </div>
                   
                   {/* Three dots menu */}
@@ -149,9 +158,17 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
               </div>
 
               {/* Description */}
-              <p className="text-[13px] text-neutral-400 leading-[1.6]">
-                Campus creator, digital storyteller and community builder at iKampus. 
-              </p>
+              <div>
+                <p className={`text-[13px] text-neutral-400 leading-[1.6] ${isExpandedBio ? '' : 'line-clamp-3'}`}>
+                  UK-based Nigerian Digital Marketing student with hands-on experience in website development and graphic design. Passionate about building strong online brands through data-driven marketing, creative visuals, and user-focused digital experiences. Constantly learning, experimenting, and delivering results in the evolving digital space.
+                </p>
+                <button
+                  onClick={() => setIsExpandedBio(!isExpandedBio)}
+                  className="text-[13px] text-gray-300 font-medium hover:text-blue-700 transition-colors mt-2"
+                >
+                  {isExpandedBio ? 'View Less' : 'View More'}
+                </button>
+              </div>
             </div>
 
             {/* Action items */}

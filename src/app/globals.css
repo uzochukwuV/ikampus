@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../ui/theme.css";
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:opsz,wght@8..21,400;8..21,600;8..21,700&display=swap');
 
 html {
   font-family: Inter;
