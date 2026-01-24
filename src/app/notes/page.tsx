@@ -48,7 +48,7 @@ export default function NotesPage() {
                     let interimTranscript = "";
                     let finalTranscript = "";
 
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    for (let i = (event as any).resultIndex; i < event.results.length; ++i) {
                         if (event.results[i].isFinal) {
                             finalTranscript += event.results[i][0].transcript;
                         } else {
