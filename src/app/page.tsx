@@ -139,7 +139,7 @@ function ChatGptNewChat2() {
             {/* Message/Chat icon */}
             <button 
               onClick={() => router.push("/messages")}
-              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors justify-center align-middle"
             >
               <FeatherMessageCircle className="w-5 h-5 text-neutral-600" />
             </button>
