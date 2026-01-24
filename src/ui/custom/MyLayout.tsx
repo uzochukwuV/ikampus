@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FeatherBarChart2 } from "@subframe/core";
 import { FeatherChevronsUpDown } from "@subframe/core";
@@ -40,7 +40,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
     ref
   ) {
     const router = useRouter();
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(true);
     const [expandedModules, setExpandedModules] = useState(false);
     const [isExpandedBio, setIsExpandedBio] = useState(false);
 
@@ -245,9 +245,8 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
 
         {/* Main content area */}
         {children ? (
-          <div className={`flex grow shrink-0 basis-0 flex-col items-start gap-4 self-stretch overflow-y-auto bg-default-background transition-all duration-300 ease-in-out ${
-            isCollapsed ? "ml-[60px]" : "ml-0"
-          }`}>
+          <div className={`flex grow shrink-0 basis-0 flex-col items-start gap-4 self-stretch overflow-y-auto bg-default-background transition-all duration-300 ease-in-out ${isCollapsed ? "ml-[60px]" : "ml-0"
+            }`}>
             {children}
           </div>
         ) : null}

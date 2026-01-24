@@ -28,7 +28,7 @@ import { FeatherMic } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 import { MyLayout } from "../ui/custom/MyLayout";
 import Image from "next/image";
-import ikampusLogo from "../assets/images/iwhite.jpg";
+import ikampusLogo from "../assets/images/ikampus_white.png";
 
 interface Message {
   id: number;
@@ -104,7 +104,7 @@ function ChatGptNewChat2() {
           {/* Left side - iKampus logo and name */}
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden bg-white">
-              <Image 
+              <Image
                 src={ikampusLogo}
                 alt="iKampus Logo"
                 width={32}
@@ -113,7 +113,7 @@ function ChatGptNewChat2() {
               />
             </div>
             <span className="text-[15px] font-semibold text-neutral-900" style={{ fontFamily: '"Source Code Variable", monospace' }}>
-                IKAMPUS
+              IKAMPUS
             </span>
           </div>
 
@@ -137,9 +137,9 @@ function ChatGptNewChat2() {
             </button>
 
             {/* Message/Chat icon */}
-            <button 
+            <button
               onClick={() => router.push("/messages")}
-              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors justify-center align-middle"
+              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors justify-center items-center"
             >
               <FeatherMessageCircle className="w-5 h-5 text-neutral-600" />
             </button>
@@ -152,7 +152,7 @@ function ChatGptNewChat2() {
             /* Empty State - Centered Greeting */
             <div className="flex w-full max-w-[800px] grow shrink-0 basis-0 flex-col items-center justify-center gap-3 pb-34">
               <h1 className="text-[52px] text-neutral-900" style={{ fontFamily: 'cursive' }}>
-                Hello, Lloyd 
+                Hello, Lloyd
               </h1>
             </div>
           ) : (
@@ -161,19 +161,17 @@ function ChatGptNewChat2() {
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex w-full gap-3 ${
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`flex w-full gap-3 ${message.role === "user" ? "justify-end" : "justify-start"
+                    }`}
                 >
                   {message.role === "assistant" && (
                     <Avatar size="small">AI</Avatar>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                      message.role === "user"
-                        ? "bg-brand-600 text-white"
-                        : "bg-neutral-100 text-default-font"
-                    }`}
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === "user"
+                      ? "bg-brand-600 text-white"
+                      : "bg-neutral-100 text-default-font"
+                      }`}
                   >
                     <p className="text-body font-body whitespace-pre-wrap">
                       {message.content}
@@ -234,18 +232,16 @@ function ChatGptNewChat2() {
                 <button
                   onClick={handleSendMessage}
                   disabled={inputValue.trim() === ""}
-                  className={`flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full transition-all ${
-                    inputValue.trim() === ""
-                      ? "bg-neutral-300 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700"
-                  }`}
+                  className={`flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full transition-all ${inputValue.trim() === ""
+                    ? "bg-neutral-300 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                    }`}
                 >
                   <FeatherArrowUp
-                    className={`w-5 h-5 ${
-                      inputValue.trim() === ""
-                        ? "text-neutral-500"
-                        : "text-white"
-                    }`}
+                    className={`w-5 h-5 ${inputValue.trim() === ""
+                      ? "text-neutral-500"
+                      : "text-white"
+                      }`}
                   />
                 </button>
               </div>
