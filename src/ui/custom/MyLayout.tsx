@@ -62,7 +62,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
       >
         {/* Sidebar */}
         <div
-          className={`flex overflow-y-auto overflow-x-hidden h-full flex-col bg-white border-r border-neutral-200 transition-all duration-300 ease-in-out ${isCollapsed ? "w-[60px] fixed left-0 top-0 z-50" : "w-[280px] relative"
+          className={`flex overflow-y-auto overflow-x-hidden h-full flex-col bg-white transition-all duration-300 ease-in-out ${isCollapsed ? "w-[60px] fixed left-0 top-0 z-50" : "w-[280px] relative border-r border-neutral-200"
             }`}
         >
           {/* Collapse/Expand Button */}
