@@ -63,7 +63,7 @@ function ChatGptNewChat2() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputValue.trim() === "") return;
 
     const newMessage: Message = {
@@ -76,17 +76,41 @@ function ChatGptNewChat2() {
     setMessages([...messages, newMessage]);
     setInputValue("");
 
-    // Simulate AI response
-    setTimeout(() => {
+    // Get AI response from Grok API
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: inputValue,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get response from AI");
+      }
+
+      const data = await response.json();
       const aiResponse: Message = {
         id: Date.now(),
-        content:
-          "Thanks for your message! I'm Ikampus AI, here to help you with your studies and campus life.",
+        content: data.message,
         role: "assistant",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiResponse]);
-    }, 1000);
+    } catch (error) {
+      console.error("Error getting AI response:", error);
+      const errorMessage: Message = {
+        id: Date.now(),
+        content:
+          "Sorry, I encountered an error. Please make sure the API key is configured correctly.",
+        role: "assistant",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
