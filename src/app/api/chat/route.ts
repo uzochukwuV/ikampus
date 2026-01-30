@@ -22,6 +22,69 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Phase 1: Determine if the message is school-related and generate a search query if needed
+    const classificationResponse = await fetch(GROQ_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a classifier. Determine if the user's message is related to school (studies, campus life, Northampton University, iKampus, etc.).
+            If it IS school-related, output a JSON object: {"isSchoolRelated": true, "searchQuery": "optimal search keywords for Northampton Ask Us site"}.
+            If it IS NOT school-related, output a JSON object: {"isSchoolRelated": false, "reason": "why it's not school related"}.
+            Only output the JSON object.`,
+          },
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+        temperature: 0,
+        response_format: { type: "json_object" }
+      }),
+    });
+
+    const classificationData = await classificationResponse.json();
+    const classification = JSON.parse(classificationData.choices[0]?.message?.content || '{}');
+
+    if (!classification.isSchoolRelated) {
+      return NextResponse.json({
+        message: "I'm sorry, I am focused on school-related matters and iKampus. I cannot help with that specific question. If you have any questions about your studies or campus life, feel free to ask!"
+      });
+    }
+
+    let searchContext = "";
+    if (classification.searchQuery) {
+      try {
+        const searchUrl = `https://askus.northampton.ac.uk/search/?q=${encodeURIComponent(classification.searchQuery)}`;
+        const searchResponse = await fetch(searchUrl);
+        const html = await searchResponse.text();
+
+        // Basic parsing to extract FAQ titles and links (or snippets)
+        // Since we don't have a full HTML parser like Cheerio, we'll use regex for a quick extraction
+        // The site uses <a> tags for result links. We'll grab the first few.
+        const matches = html.matchAll(/<a[^>]+href="([^"]+)"[^>]*>(.*?)<\/a>/g);
+        let count = 0;
+        for (const match of matches) {
+          const href = match[1];
+          const text = match[2].replace(/<[^>]*>/g, '').trim(); // Remove nested tags
+          if (href.includes('/faq/') && text.length > 5) {
+            searchContext += `FAQ: ${text} (Link: https://askus.northampton.ac.uk${href})\n`;
+            count++;
+          }
+          if (count >= 5) break;
+        }
+      } catch (e) {
+        console.error("Search error:", e);
+      }
+    }
+
+    // Phase 2: Final response with context
     const response = await fetch(GROQ_API_URL, {
       method: 'POST',
       headers: {
@@ -33,11 +96,16 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: 'You are Lloyd, an AI assistant for iKampus. You help students with their studies, campus life, and general questions. Be helpful, friendly, and concise in your responses.',
+            content: `You are Lloyd, an AI assistant for iKampus and Northampton University.
+            You ONLY answer school-related questions.
+            If context from the Northampton 'Ask Us' site is provided, use it to give an accurate answer.
+            Always include the relevant link if you found an answer on the 'Ask Us' site.
+            If the question is school-related but you cannot find a specific answer in the context or your knowledge, suggest visiting https://askus.northampton.ac.uk/.
+            Be helpful, friendly, and concise.`,
           },
           {
             role: 'user',
-            content: message,
+            content: `Context: ${searchContext || "No specific site context found."}\n\nQuestion: ${message}`,
           },
         ],
         temperature: 0.7,
@@ -46,15 +114,6 @@ export async function POST(request: NextRequest) {
     });
 
     const data = await response.json();
-
-    if (!response.ok) {
-      console.error('Groq API error:', JSON.stringify(data));
-      return NextResponse.json(
-        { error: data.error?.message || 'Failed to get response from Groq API' },
-        { status: response.status }
-      );
-    }
-
     const aiMessage = data.choices[0]?.message?.content || 'Sorry, I could not generate a response.';
 
     return NextResponse.json({ message: aiMessage });
