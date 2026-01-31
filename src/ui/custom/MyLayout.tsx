@@ -62,7 +62,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
       >
         {/* Sidebar */}
         <div
-          className={`flex overflow-y-auto overflow-x-hidden h-full flex-col bg-white transition-all duration-300 ease-in-out ${isCollapsed ? "w-[60px] fixed left-0 top-0 z-50" : "w-[280px] relative border-r border-neutral-200"
+          className={`flex overflow-y-auto overflow-x-hidden h-full flex-col bg-white transition-all duration-300 ease-in-out z-50 ${isCollapsed ? "w-[60px] fixed left-0 top-0" : "w-[280px] fixed left-0 top-0 shadow-2xl lg:shadow-none lg:relative lg:border-r lg:border-neutral-200"
             }`}
         >
           {/* Collapse/Expand Button */}
@@ -220,7 +220,10 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
                     )}
                   </div>
 
-                  <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                  <button
+                    onClick={() => router.push("/calendar")}
+                    className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                  >
                     <FeatherCalendar className="w-[18px] h-[18px] text-neutral-600" />
                     <span>Add Calendar</span>
                   </button>

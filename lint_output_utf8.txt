@@ -1,0 +1,43 @@
+﻿
+> .v2@0.1.0 lint
+> next lint
+
+node.exe : 
+At line:1 char:1
++ & "C:\nvm4w\nodejs/
+node.exe" "C:\nvm4w\n
+odejs/node_modules/np
+m/bin/np ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (:String   
+ ) [], RemoteExce    
+ption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+./src/app/calendar/pa
+ge.tsx
+207:42  Error: 
+'FeatherCalendar' is 
+not defined.  
+react/jsx-no-undef
+233:108  Error: `'` 
+can be escaped with 
+`&apos;`, `&lsquo;`, 
+`&#39;`, `&rsquo;`.  
+react/no-unescaped-en
+tities
+
+info  - Need to 
+disable some ESLint 
+rules? Learn more 
+here: https://nextjs.
+org/docs/basic-featur
+es/eslint#disabling-r
+ules
