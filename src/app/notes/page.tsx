@@ -6,81 +6,91 @@ import { IconButton } from "@/src/ui/components/IconButton";
 import { FeatherMic, FeatherSquare, FeatherTrash2, FeatherPlus, FeatherFileText } from "@subframe/core";
 import { useNotes } from "@/src/context/NotesContext";
 
-// Define a type for the speech recognition object
-interface SpeechRecognitionEvent extends Event {
-    results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognition extends EventTarget {
-    continuous: boolean;
-    interimResults: boolean;
-    lang: string;
-    onresult: (event: SpeechRecognitionEvent) => void;
-    onerror: (event: any) => void;
-    onend: () => void;
-    start: () => void;
-    stop: () => void;
-}
-
-declare global {
-    interface Window {
-        SpeechRecognition: any;
-        webkitSpeechRecognition: any;
-    }
-}
+// Types removed as we switched to MediaRecorder
 
 export default function NotesPage() {
     const { notes, addNote, deleteNote } = useNotes();
     const [isRecording, setIsRecording] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
     const [transcription, setTranscription] = useState("");
-    const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-    useEffect(() => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            recognitionRef.current = new SpeechRecognition();
-            if (recognitionRef.current) {
-                recognitionRef.current.continuous = true;
-                recognitionRef.current.interimResults = true;
-                recognitionRef.current.lang = "en-US";
+    // MediaRecorder refs
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const chunksRef = useRef<BlobPart[]>([]);
 
-                recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
-                    let interimTranscript = "";
-                    let finalTranscript = "";
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = mediaRecorder;
+            chunksRef.current = [];
 
-                    for (let i = (event as any).resultIndex; i < event.results.length; ++i) {
-                        if (event.results[i].isFinal) {
-                            finalTranscript += event.results[i][0].transcript;
-                        } else {
-                            interimTranscript += event.results[i][0].transcript;
-                        }
-                    }
-                    setTranscription(finalTranscript + interimTranscript);
-                };
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) {
+                    chunksRef.current.push(e.data);
+                }
+            };
 
-                recognitionRef.current.onend = () => {
-                    setIsRecording(false);
-                };
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
 
-                recognitionRef.current.onerror = (event: any) => {
-                    console.error("Speech recognition error:", event.error);
-                    setIsRecording(false);
-                };
-            }
+                // Stop all tracks to release microphone
+                stream.getTracks().forEach(track => track.stop());
+
+                handleTranscription(audioBlob);
+            };
+
+            mediaRecorder.start();
+            setIsRecording(true);
+            setTranscription(""); // Clear previous transcription
+        } catch (error) {
+            console.error("Error accessing microphone:", error);
+            alert("Could not access microphone. Please ensure permissions are granted.");
         }
-    }, []);
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+            setIsProcessing(true); // Start processing state
+        }
+    };
+
+    const handleTranscription = async (audioBlob: Blob) => {
+        try {
+            const formData = new FormData();
+            formData.append('file', audioBlob);
+
+            const response = await fetch('/api/transcribe', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error("Server Error Details:", errorData);
+                throw new Error(errorData.details || errorData.error || 'Transcription failed');
+            }
+
+            const data = await response.json();
+            if (data.text) {
+                setTranscription(data.text);
+                addNote(data.text);
+            }
+        } catch (error: any) {
+            console.error("Transcription error:", error);
+            alert(`Failed to transcribe: ${error.message}`);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
 
     const toggleRecording = () => {
         if (isRecording) {
-            recognitionRef.current?.stop();
-            if (transcription.trim()) {
-                addNote(transcription);
-                setTranscription("");
-            }
+            stopRecording();
         } else {
-            setTranscription("");
-            recognitionRef.current?.start();
-            setIsRecording(true);
+            startRecording();
         }
     };
 
@@ -105,21 +115,29 @@ export default function NotesPage() {
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto">
                         <button
                             onClick={handleManualAdd}
-                            className="flex items-center justify-center md:justify-start gap-2 px-4 py-2 bg-neutral-100 font-medium text-neutral-700 hover:bg-neutral-200 rounded-full transition-all text-sm flex-1 sm:flex-initial"
+                            disabled={isRecording || isProcessing}
+                            className="flex items-center justify-center md:justify-start gap-2 px-4 py-2 bg-neutral-100 font-medium text-neutral-700 hover:bg-neutral-200 rounded-full transition-all text-sm flex-1 sm:flex-initial disabled:opacity-50"
                         >
                             <FeatherPlus className="w-4 h-4" />
                             <span>Text Note</span>
                         </button>
                         <button
                             onClick={toggleRecording}
+                            disabled={isProcessing}
                             className={`flex items-center justify-center gap-2 px-6 py-2 rounded-full font-medium transition-all text-sm flex-1 sm:flex-initial ${isRecording
                                 ? "bg-red-500 text-white hover:bg-red-600 animate-pulse"
-                                : "bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg"
+                                : isProcessing
+                                    ? "bg-neutral-300 text-neutral-500 cursor-not-allowed"
+                                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg"
                                 }`}
                         >
                             {isRecording ? <FeatherSquare className="w-4 h-4" /> : <FeatherMic className="w-4 h-4" />}
-                            <span className="hidden sm:inline">{isRecording ? "Stop Recording" : "Record Note"}</span>
-                            <span className="sm:hidden">{isRecording ? "Stop" : "Record"}</span>
+                            <span className="hidden sm:inline">
+                                {isRecording ? "Stop Recording" : isProcessing ? "Processing..." : "Record Note"}
+                            </span>
+                            <span className="sm:hidden">
+                                {isRecording ? "Stop" : isProcessing ? "..." : "Record"}
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -127,22 +145,30 @@ export default function NotesPage() {
                 {/* Content Area */}
                 <div className="flex-1 overflow-auto p-4 md:p-8 bg-neutral-50/30">
                     <div className="max-w-4xl mx-auto">
-                        {/* Recording Feedback */}
-                        {isRecording && (
+                        {/* Recording/Processing Feedback */}
+                        {(isRecording || isProcessing) && (
                             <div className="mb-8 p-6 bg-white border border-blue-100 rounded-2xl shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-ping" />
-                                    <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">Listening...</span>
+                                <div className="flex items-center gap-3 mb-3">
+                                    {isRecording ? (
+                                        <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-ping" />
+                                    ) : (
+                                        <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                                    )}
+                                    <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">
+                                        {isRecording ? "Listening..." : "Transcribing..."}
+                                    </span>
                                 </div>
                                 <p className="text-lg text-neutral-800 italic leading-relaxed">
-                                    {transcription || "Start speaking to see transcription..."}
+                                    {isRecording
+                                        ? "Speak clearly. Click Stop when finished."
+                                        : "Generating precise transcription with AI..."}
                                 </p>
                             </div>
                         )}
 
                         {/* Notes Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
-                            {notes.length === 0 && !isRecording ? (
+                            {notes.length === 0 && !isRecording && !isProcessing ? (
                                 <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
                                     <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
                                         <FeatherFileText className="w-8 h-8 text-neutral-400" />
