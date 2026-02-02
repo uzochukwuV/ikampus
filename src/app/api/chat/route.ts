@@ -5,7 +5,7 @@ const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 export async function POST(request: NextRequest) {
   try {
-    const { message } = await request.json();
+    const { message, history } = await request.json();
 
     if (!message) {
       return NextResponse.json(
@@ -13,6 +13,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Format conversation history for context
+    const conversationContext = history?.length > 0
+      ? history.map((m: { role: string; content: string }) =>
+          `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
+        ).join('\n')
+      : '';
 
     if (!GROQ_API_KEY) {
       console.error('GROQ_API_KEY not found in environment variables');
@@ -49,8 +56,23 @@ export async function POST(request: NextRequest) {
       }),
     });
 
+    if (!classificationResponse.ok) {
+      console.error('Classification API error:', classificationResponse.status);
+      throw new Error('Failed to classify message');
+    }
+
     const classificationData = await classificationResponse.json();
-    const classification = JSON.parse(classificationData.choices[0]?.message?.content || '{}');
+
+    let classification = { isSchoolRelated: true, searchQuery: message };
+    try {
+      const content = classificationData.choices?.[0]?.message?.content;
+      if (content) {
+        classification = JSON.parse(content);
+      }
+    } catch (parseError) {
+      console.error('Failed to parse classification response:', parseError);
+      // Default to treating as school-related to be helpful
+    }
 
     if (!classification.isSchoolRelated) {
       return NextResponse.json({
@@ -116,8 +138,13 @@ export async function POST(request: NextRequest) {
       }),
     });
 
+    if (!response.ok) {
+      console.error('Final response API error:', response.status);
+      throw new Error('Failed to generate response');
+    }
+
     const data = await response.json();
-    const aiMessage = data.choices[0]?.message?.content || 'Sorry, I could not generate a response.';
+    const aiMessage = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response. Please try again.';
 
     return NextResponse.json({ message: aiMessage });
   } catch (error) {

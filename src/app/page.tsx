@@ -37,12 +37,25 @@ interface Message {
   timestamp: Date;
 }
 
+// Typing indicator component
+const TypingIndicator = () => (
+  <div className="flex items-center gap-1 px-4 py-3">
+    <div className="flex gap-1">
+      <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+      <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+      <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+    </div>
+  </div>
+);
+
 function ChatGptNewChat2() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [inputValue, setInputValue] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   // Reset messages when "new" parameter is in URL
   React.useEffect(() => {
@@ -64,7 +77,7 @@ function ChatGptNewChat2() {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (inputValue.trim() === "") return;
+    if (inputValue.trim() === "" || isLoading) return;
 
     const newMessage: Message = {
       id: Date.now(),
@@ -75,9 +88,16 @@ function ChatGptNewChat2() {
 
     setMessages([...messages, newMessage]);
     setInputValue("");
+    setIsLoading(true);
 
-    // Get AI response from Grok API
+    // Get AI response from Groq API
     try {
+      // Include recent conversation history for context
+      const conversationHistory = [...messages, newMessage].slice(-6).map(m => ({
+        role: m.role,
+        content: m.content
+      }));
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -85,6 +105,7 @@ function ChatGptNewChat2() {
         },
         body: JSON.stringify({
           message: inputValue,
+          history: conversationHistory,
         }),
       });
 
@@ -110,6 +131,9 @@ function ChatGptNewChat2() {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -124,27 +148,27 @@ function ChatGptNewChat2() {
     <MyLayout>
       <div className="flex h-full w-full flex-col items-start bg-white">
         {/* Top Navigation Bar */}
-        <div className="flex w-full items-center justify-between border-b border-neutral-200 px-6 py-3">
+        <div className="flex w-full items-center justify-between border-b border-neutral-100 px-6 py-3 bg-white/80 backdrop-blur-lg sticky top-0 z-10">
           {/* Left side - iKampus logo and name */}
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden bg-white">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-neutral-900 shadow-lg apple-spring">
               <Image
                 src={ikampusLogo}
                 alt="iKampus Logo"
-                width={32}
-                height={32}
+                width={36}
+                height={36}
                 className="w-full h-full object-cover"
               />
             </div>
-            <span className="text-[15px] font-semibold text-neutral-900" style={{ fontFamily: '"Source Code Variable", monospace' }}>
-              IKAMPUS
+            <span className="text-[16px] font-semibold text-neutral-900 tracking-tight">
+              iKampus
             </span>
           </div>
 
           {/* Right side - Icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             {/* History/Clock icon */}
-            <button className="p-2 hover:bg-neutral-100 rounded-lg transition-colors">
+            <button className="p-2.5 hover:bg-neutral-100 rounded-xl transition-all duration-200 apple-spring apple-focus">
               <svg
                 className="w-5 h-5 text-neutral-600"
                 fill="none"
@@ -163,7 +187,7 @@ function ChatGptNewChat2() {
             {/* Message/Chat icon */}
             <button
               onClick={() => router.push("/messages")}
-              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors justify-center items-center"
+              className="p-2.5 hover:bg-neutral-100 rounded-xl transition-all duration-200 apple-spring apple-focus"
             >
               <FeatherMessageCircle className="w-5 h-5 text-neutral-600" />
             </button>
@@ -175,55 +199,93 @@ function ChatGptNewChat2() {
           {messages.length === 0 ? (
             /* Empty State - Centered Greeting */
             <div className="flex w-full max-w-[800px] grow shrink-0 basis-0 flex-col items-center justify-center gap-3 pb-34">
-              <h1 className="text-[52px] text-neutral-900" style={{ fontFamily: 'cursive' }}>
+              <h1 className="text-[52px] text-neutral-900 animate-fade-in">
                 Hello, Lloyd
               </h1>
+              <p className="text-neutral-500 text-lg animate-fade-in-delay">
+                How can I help you today?
+              </p>
             </div>
           ) : (
             /* Messages Area */
-            <div className="flex w-full max-w-[768px] flex-col items-start gap-4 py-4">
-              {messages.map((message) => (
+            <div className="flex w-full max-w-[768px] flex-col items-start gap-4 py-4 apple-scroll">
+              {messages.map((message, index) => (
                 <div
                   key={message.id}
-                  className={`flex w-full gap-3 ${message.role === "user" ? "justify-end" : "justify-start"
+                  className={`flex w-full gap-3 animate-message-in ${message.role === "user" ? "justify-end" : "justify-start"
                     }`}
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
                   {message.role === "assistant" && (
-                    <Avatar size="small">AI</Avatar>
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center shadow-md">
+                      <FeatherSparkles className="w-4 h-4 text-white" />
+                    </div>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === "user"
-                      ? "bg-brand-600 text-white"
-                      : "bg-neutral-100 text-default-font"
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md ${message.role === "user"
+                      ? "bg-neutral-800 text-white rounded-br-md"
+                      : "bg-neutral-100 text-neutral-800 rounded-bl-md"
                       }`}
                   >
-                    <p className="text-body font-body whitespace-pre-wrap">
+                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
                       {message.content}
                     </p>
+                    <span className={`text-[11px] mt-1 block ${message.role === "user" ? "text-neutral-400" : "text-neutral-400"}`}>
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                   {message.role === "user" && (
-                    <Avatar
-                      size="small"
-                      image="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/fychrij7dzl8wgq2zjq9.avif"
-                    >
-                      LP
-                    </Avatar>
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden shadow-lg ring-2 ring-white">
+                      <img
+                        src="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/fychrij7dzl8wgq2zjq9.avif"
+                        alt="User"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   )}
                 </div>
               ))}
+
+              {/* Typing Indicator */}
+              {isLoading && (
+                <div className="flex w-full gap-3 justify-start animate-fade-in">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center shadow-md">
+                    <FeatherSparkles className="w-4 h-4 text-white animate-pulse" />
+                  </div>
+                  <div className="bg-neutral-100 rounded-2xl rounded-bl-md shadow-sm">
+                    <TypingIndicator />
+                  </div>
+                </div>
+              )}
+
               <div ref={messagesEndRef} />
             </div>
           )}
 
           {/* Input Area - Fixed at bottom */}
-          <div className="flex w-full max-w-[800px] flex-col items-center justify-center gap-4 mt-auto">
+          <div className="flex w-full max-w-[800px] flex-col items-center justify-center gap-4 mt-auto pb-4">
+            {/* Quick action chips */}
+            {messages.length === 0 && (
+              <div className="flex flex-wrap gap-2 justify-center animate-fade-in-delay">
+                {['Help me study', 'Explain a concept', 'Write an essay', 'Practice questions'].map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    onClick={() => setInputValue(suggestion)}
+                    className="px-4 py-2 rounded-full text-sm text-neutral-600 bg-white border border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300 transition-all duration-200 apple-spring"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Input Box */}
-            <div className="flex w-full flex-col items-start rounded-[24px] bg-neutral-100 shadow-sm">
+            <div className="chat-input-wrapper flex w-full flex-col items-start rounded-[28px] bg-white border border-neutral-200 shadow-sm hover:shadow-md">
               <div className="flex w-full items-center gap-3 px-4 py-3">
                 {/* Attachment Icon */}
-                <button className="flex-shrink-0 p-1 hover:bg-neutral-200 rounded-lg transition-colors">
+                <button className="flex-shrink-0 p-2 hover:bg-neutral-100 rounded-xl transition-all duration-200 apple-spring apple-focus">
                   <svg
-                    className="w-5 h-5 text-neutral-600"
+                    className="w-5 h-5 text-neutral-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -239,37 +301,53 @@ function ChatGptNewChat2() {
 
                 {/* Text Input */}
                 <input
+                  ref={inputRef}
                   type="text"
                   placeholder="Message iKampus AI..."
                   value={inputValue}
                   onChange={(event) => setInputValue(event.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="flex-1 bg-transparent text-[15px] text-neutral-900 placeholder:text-neutral-500 outline-none border-none"
+                  disabled={isLoading}
+                  className="flex-1 bg-transparent text-[15px] text-neutral-900 placeholder:text-neutral-400 outline-none border-none disabled:opacity-50"
                 />
 
                 {/* Voice Icon */}
-                <button className="flex-shrink-0 p-1 hover:bg-neutral-200 rounded-lg transition-colors">
-                  <FeatherMic className="w-5 h-5 text-neutral-600" />
+                <button
+                  className="flex-shrink-0 p-2 hover:bg-neutral-100 rounded-xl transition-all duration-200 apple-spring apple-focus"
+                  disabled={isLoading}
+                >
+                  <FeatherMic className="w-5 h-5 text-neutral-500" />
                 </button>
 
                 {/* Send Button */}
                 <button
                   onClick={handleSendMessage}
-                  disabled={inputValue.trim() === ""}
-                  className={`flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full transition-all ${inputValue.trim() === ""
-                    ? "bg-neutral-300 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
+                  disabled={inputValue.trim() === "" || isLoading}
+                  className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 apple-spring ${
+                    inputValue.trim() === "" || isLoading
+                      ? "bg-neutral-200 cursor-not-allowed"
+                      : "bg-neutral-800 hover:bg-neutral-700 shadow-md hover:shadow-lg"
                     }`}
                 >
-                  <FeatherArrowUp
-                    className={`w-5 h-5 ${inputValue.trim() === ""
-                      ? "text-neutral-500"
-                      : "text-white"
-                      }`}
-                  />
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <FeatherArrowUp
+                      className={`w-5 h-5 transition-transform ${
+                        inputValue.trim() === ""
+                          ? "text-neutral-400"
+                          : "text-white"
+                        }`}
+                    />
+                  )}
                 </button>
               </div>
             </div>
+
+            {/* Footer text */}
+            <p className="text-xs text-neutral-400 text-center">
+              iKampus AI can make mistakes. Consider checking important information.
+            </p>
           </div>
         </div>
       </div>
@@ -286,3 +364,4 @@ function ChatGptNewChatWrapper() {
 }
 
 export default ChatGptNewChatWrapper;
+

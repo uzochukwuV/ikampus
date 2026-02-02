@@ -60,22 +60,51 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
         ref={ref}
         {...otherProps}
       >
-        {/* Sidebar */}
+        {/* SVG Filter for Liquid Glass Effect */}
+        <svg className="hidden" aria-hidden="true">
+          <defs>
+            <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.01 0.01"
+                numOctaves="3"
+                seed="5"
+                result="noise"
+              />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="noise"
+                scale="8"
+                xChannelSelector="R"
+                yChannelSelector="G"
+              />
+            </filter>
+          </defs>
+        </svg>
+
+        {/* Sidebar with Liquid Glass Effect */}
         <div
-          className={`flex overflow-y-auto overflow-x-hidden h-full flex-col bg-white transition-all duration-300 ease-in-out z-50 ${isCollapsed ? "w-[60px] fixed left-0 top-0" : "w-[280px] fixed left-0 top-0 shadow-2xl lg:shadow-none lg:relative lg:border-r lg:border-neutral-200"
+          className={`liquid-glass h-full transition-all duration-300 ease-in-out z-50 ${isCollapsed ? "w-[60px] fixed left-0 top-0" : "w-[280px] fixed left-0 top-0 lg:relative"
             }`}
         >
-          {/* Collapse/Expand Button */}
-          <div className="flex justify-center p-3 border-b border-neutral-200">
+          {/* Glass Effect Layers */}
+          <div className="liquid-glass-effect" />
+          <div className="liquid-glass-tint" />
+          <div className="liquid-glass-shine rounded-none" />
+
+          {/* Sidebar Content */}
+          <div className="liquid-glass-content flex overflow-y-auto overflow-x-hidden h-full flex-col apple-scroll">
+            {/* Collapse/Expand Button */}
+            <div className="flex justify-center p-3 border-b border-white/20">
             <button
               onClick={toggleSidebar}
-              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+              className="p-2.5 apple-press rounded-xl transition-all duration-200"
               aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {isCollapsed ? (
-                <FeatherMenu className="w-5 h-5 text-neutral-600" />
+                <FeatherMenu className="w-5 h-5 text-neutral-700" />
               ) : (
-                <FeatherChevronLeft className="w-5 h-5 text-neutral-600" />
+                <FeatherChevronLeft className="w-5 h-5 text-neutral-700" />
               )}
             </button>
           </div>
@@ -83,7 +112,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
           {!isCollapsed ? (
             <>
               {/* Header with user profile */}
-              <div className="flex flex-col gap-5 p-6 border-b border-neutral-200">
+              <div className="flex flex-col gap-5 p-6 border-b border-white/20">
                 {/* Profile name and info - Moved to top */}
 
 
@@ -102,7 +131,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
 
                 {/* Profile images */}
                 <div className="flex gap-2">
-                  <div className="w-full aspect-square rounded-xl overflow-hidden">
+                  <div className="w-full aspect-square rounded-2xl overflow-hidden apple-shadow apple-spring cursor-pointer">
                     <Image
                       src="https://res.cloudinary.com/subframe/image/upload/v1711417513/shared/kwut7rhuyivweg8tmyzl.jpg"
                       alt="Profile 1"
@@ -138,7 +167,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
                     </div>
 
                     {/* Three dots menu */}
-                    <button className="p-1 hover:bg-neutral-100 rounded transition-colors">
+                    <button className="p-1.5 apple-press rounded-lg apple-focus">
                       <svg
                         className="w-4 h-4 text-neutral-600"
                         fill="none"
@@ -158,12 +187,12 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
 
                 {/* Description */}
                 <div>
-                  <p className={`text-[13px] text-neutral-400 leading-[1.6] ${isExpandedBio ? '' : 'line-clamp-3'}`}>
+                  <p className={`text-[13px] text-neutral-600 leading-[1.6] ${isExpandedBio ? '' : 'line-clamp-3'}`}>
                     UK-based Nigerian Digital Marketing student with hands-on experience in website development and graphic design. Passionate about building strong online brands through data-driven marketing, creative visuals, and user-focused digital experiences. Constantly learning, experimenting, and delivering results in the evolving digital space.
                   </p>
                   <button
                     onClick={() => setIsExpandedBio(!isExpandedBio)}
-                    className="text-[13px] text-gray-300 font-medium hover:text-blue-700 transition-colors mt-2"
+                    className="text-[13px] text-[#007AFF] font-medium hover:text-[#0056B3] transition-colors mt-2 apple-focus rounded"
                   >
                     {isExpandedBio ? 'View Less' : 'View More'}
                   </button>
@@ -175,14 +204,14 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
                 <div className="flex flex-col gap-1">
                   <button
                     onClick={() => router.push("/?new=true")}
-                    className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 apple-list-item apple-focus"
                   >
-                    <FeatherPlusCircle className="w-[18px] h-[18px] text-neutral-600" />
+                    <FeatherPlusCircle className="w-[18px] h-[18px] text-neutral-700" />
                     <span>Add New</span>
                   </button>
 
-                  <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
-                    <FeatherUsers className="w-[18px] h-[18px] text-neutral-600" />
+                  <button className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 apple-list-item apple-focus">
+                    <FeatherUsers className="w-[18px] h-[18px] text-neutral-700" />
                     <span>Add Group</span>
                   </button>
 
@@ -190,30 +219,30 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
                   <div>
                     <button
                       onClick={toggleModules}
-                      className="flex items-center justify-between w-full gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                      className="flex items-center justify-between w-full gap-3 px-3 py-2.5 text-[14px] text-neutral-700 apple-list-item apple-focus"
                     >
                       <div className="flex items-center gap-3">
-                        <FeatherFolder className="w-[18px] h-[18px] text-neutral-600" />
+                        <FeatherFolder className="w-[18px] h-[18px] text-neutral-700" />
                         <span>Add Modules</span>
                       </div>
                       <FeatherChevronDown
-                        className={`w-4 h-4 text-neutral-600 transition-transform ${expandedModules ? 'rotate-180' : ''}`}
+                        className={`w-4 h-4 text-neutral-700 transition-transform ${expandedModules ? 'rotate-180' : ''}`}
                       />
                     </button>
 
                     {/* Submenu items */}
                     {expandedModules && (
                       <div className="flex flex-col gap-0.5 mt-1 pl-6">
-                        <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors text-left">
-                          <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
+                        <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-700 apple-list-item text-left">
+                          <span className="w-1.5 h-1.5 bg-neutral-500 rounded-full"></span>
                           <span>MKT2006W1</span>
                         </button>
-                        <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors text-left">
-                          <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
+                        <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-700 apple-list-item text-left">
+                          <span className="w-1.5 h-1.5 bg-neutral-500 rounded-full"></span>
                           <span>MKT2050W</span>
                         </button>
-                        <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors text-left">
-                          <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
+                        <button className="flex items-center gap-3 px-3 py-2 text-[13px] text-neutral-700 apple-list-item text-left">
+                          <span className="w-1.5 h-1.5 bg-neutral-500 rounded-full"></span>
                           <span>MKT2011W</span>
                         </button>
                       </div>
@@ -222,17 +251,17 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
 
                   <button
                     onClick={() => router.push("/calendar")}
-                    className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 apple-list-item apple-focus"
                   >
-                    <FeatherCalendar className="w-[18px] h-[18px] text-neutral-600" />
+                    <FeatherCalendar className="w-[18px] h-[18px] text-neutral-700" />
                     <span>Add Calendar</span>
                   </button>
 
                   <button
                     onClick={() => router.push("/notes")}
-                    className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 text-[14px] text-neutral-700 apple-list-item apple-focus"
                   >
-                    <FeatherClock className="w-[18px] h-[18px] text-neutral-600" />
+                    <FeatherClock className="w-[18px] h-[18px] text-neutral-700" />
                     <span>Add Note</span>
                   </button>
                 </div>
@@ -244,6 +273,7 @@ const DefaultPageLayoutRoot = React.forwardRef<HTMLDivElement, DefaultPageLayout
               {/* Content is hidden when collapsed */}
             </div>
           )}
+          </div>
         </div>
 
         {/* Main content area */}
