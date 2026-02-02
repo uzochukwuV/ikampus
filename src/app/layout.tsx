@@ -1,7 +1,8 @@
-import { NotesProvider } from "@/src/context/NotesContext"
-import "./globals.css"
-import type { Metadata } from "next"
-import { Ropa_Sans, Sora } from 'next/font/google'
+import { NotesProvider } from "@/src/context/NotesContext";
+import "./globals.css";
+import type { Metadata } from "next";
+import { Ropa_Sans, Sora } from 'next/font/google';
+import Script from "next/script";
 
 
 const ropa = Sora({
@@ -21,8 +22,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-        <script noModule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <Script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></Script>
+        <Script noModule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></Script>
         {/* eslint-disable-next-line */}
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
