@@ -6,7 +6,28 @@ import { IconButton } from "@/src/ui/components/IconButton";
 import { FeatherMic, FeatherSquare, FeatherTrash2, FeatherPlus, FeatherFileText } from "@subframe/core";
 import { useNotes } from "@/src/context/NotesContext";
 
-// Types removed as we switched to MediaRecorder
+// Define a type for the speech recognition object
+interface SpeechRecognitionEvent extends Event {
+    results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognition extends EventTarget {
+    continuous: boolean;
+    interimResults: boolean;
+    lang: string;
+    onresult: (event: SpeechRecognitionEvent) => void;
+    onerror: (event: any) => void;
+    onend: () => void;
+    start: () => void;
+    stop: () => void;
+}
+
+declare global {
+    interface Window {
+        SpeechRecognition: any;
+        webkitSpeechRecognition: any;
+    }
+}
 
 export default function NotesPage() {
     const { notes, addNote, deleteNote } = useNotes();

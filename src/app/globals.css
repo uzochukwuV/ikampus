@@ -1,14 +1,378 @@
 @import "tailwindcss";
 @import "../ui/theme.css";
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:opsz,wght@8..21,400;8..21,600;8..21,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ropa+Sans:ital@0;1&display=swap');
 
 html {
-  font-family: Inter;
+  
+    font-weight: 400;
   height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+* {
+    
+    
+    font-weight: 500;
+}
+
 body {
   flex-grow: 1;
+}
+
+/* LIQUID GLASS EFFECT STYLES */
+.liquid-glass {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 40px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+}
+
+.liquid-glass-effect {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  filter: url(#glass-distortion);
+  overflow: hidden;
+}
+
+.liquid-glass-tint {
+  z-index: 1;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+}
+
+.liquid-glass-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  box-shadow:
+    inset 2px 2px 4px 0 rgba(255, 255, 255, 0.8),
+    inset -1px -1px 2px 1px rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.liquid-glass-content {
+  position: relative;
+  z-index: 3;
+}
+
+/* Hover enhancement for interactive glass elements */
+.liquid-glass:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 0 60px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode variant */
+.liquid-glass-dark .liquid-glass-tint {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 30, 30, 0.7) 0%,
+    rgba(50, 50, 50, 0.4) 100%
+  );
+}
+
+.liquid-glass-dark .liquid-glass-shine {
+  box-shadow:
+    inset 2px 2px 4px 0 rgba(255, 255, 255, 0.1),
+    inset -1px -1px 2px 1px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* APPLE-STYLE AESTHETICS */
+
+/* Spring animation for interactive elements */
+.apple-spring {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.apple-spring:active {
+  transform: scale(0.96);
+}
+
+/* Apple-style button press effect */
+.apple-press {
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.apple-press:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.apple-press:active {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Apple vibrancy effect (color bleeding through glass) */
+.apple-vibrancy {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.56) 100%
+  );
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Apple-style subtle shadow */
+.apple-shadow {
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 8px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Apple-style card with subtle depth */
+.apple-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 0.5px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.04),
+    0 4px 8px rgba(0, 0, 0, 0.04),
+    0 12px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Apple-style pill button */
+.apple-pill {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #007AFF 0%, #0066D6 100%);
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 122, 255, 0.2);
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.apple-pill:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.12),
+    0 8px 16px rgba(0, 122, 255, 0.3);
+}
+
+.apple-pill:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Apple-style segmented control */
+.apple-segmented {
+  display: inline-flex;
+  background: rgba(118, 118, 128, 0.12);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.apple-segmented-item {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.apple-segmented-item.active {
+  background: white;
+  color: #000;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Apple-style subtle divider */
+.apple-divider {
+  height: 0.5px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 20%,
+    rgba(0, 0, 0, 0.1) 80%,
+    transparent 100%
+  );
+}
+
+/* Apple-style focus ring */
+.apple-focus:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(0, 122, 255, 0.3),
+    0 0 0 1px rgba(0, 122, 255, 0.5);
+}
+
+/* Apple-style smooth scroll container */
+.apple-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.apple-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.apple-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.apple-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.apple-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Apple-style list item hover */
+.apple-list-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.apple-list-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.apple-list-item:active {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* CHAT UI ANIMATIONS */
+
+/* Message slide-in animation */
+@keyframes message-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-message-in {
+  animation: message-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-fade-in-delay {
+  animation: fade-in 0.5s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+/* Typing indicator bounce */
+@keyframes bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+/* Send button pulse when active */
+@keyframes send-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-send-pulse {
+  animation: send-pulse 0.5s ease-out;
+}
+
+/* Input focus glow */
+.chat-input-wrapper {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.chat-input-wrapper:focus-within {
+  box-shadow:
+    0 0 0 2px rgba(59, 130, 246, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Glass chat bubble for AI */
+.chat-bubble-ai {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(248, 250, 252, 0.95) 100%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 0.5px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Gradient chat bubble for user */
+.chat-bubble-user {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+}
+
+/* Shimmer effect for loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }

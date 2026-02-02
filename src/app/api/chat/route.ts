@@ -5,7 +5,7 @@ const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 export async function POST(request: NextRequest) {
   try {
-    const { message } = await request.json();
+    const { message, history } = await request.json();
 
     if (!message) {
       return NextResponse.json(
@@ -13,6 +13,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Format conversation history for context
+    const conversationContext = history?.length > 0
+      ? history.map((m: { role: string; content: string }) =>
+          `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
+        ).join('\n')
+      : '';
 
     if (!GROQ_API_KEY) {
       console.error('GROQ_API_KEY not found in environment variables');
@@ -34,10 +41,31 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `You are a classifier. Determine if the user's message is related to school (studies, campus life, Northampton University, iKampus, etc.).
-            If it IS school-related, output a JSON object: {"isSchoolRelated": true, "searchQuery": "optimal search keywords for Northampton Ask Us site"}.
-            If it IS NOT school-related, output a JSON object: {"isSchoolRelated": false, "reason": "why it's not school related"}.
-            Only output the JSON object.`,
+            content: `You are a classifier. Determine if the user's message is related to education or learning.
+
+ACCEPT these topics (isEducationRelated: true):
+- Academic subjects (math, science, history, literature, programming, languages, etc.)
+- Study help, homework, assignments, essays, research
+- Learning concepts, explanations of topics, tutorials
+- University/college life, campus questions, student services
+- Career guidance, skills development, professional growth
+- Northampton University or iKampus specific questions
+- General knowledge questions that could help someone learn
+- Exam preparation, study techniques, time management for students
+
+REJECT these topics (isEducationRelated: false):
+- Harmful, illegal, or dangerous content
+- Adult/explicit content
+- Personal relationship advice unrelated to academics
+- Entertainment recommendations (movies, games, music)
+- Political debates or controversial opinions
+- Medical/legal advice (suggest consulting professionals)
+
+If it IS education/learning related, output: {"isEducationRelated": true, "needsUniSearch": true/false, "searchQuery": "keywords if Northampton-specific"}
+Set needsUniSearch to true ONLY if the question is specifically about Northampton University policies, services, or campus.
+
+If it IS NOT education related, output: {"isEducationRelated": false, "reason": "brief reason"}
+Only output the JSON object.`,
           },
           {
             role: 'user',
@@ -49,17 +77,32 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    const classificationData = await classificationResponse.json();
-    const classification = JSON.parse(classificationData.choices[0]?.message?.content || '{}');
+    if (!classificationResponse.ok) {
+      console.error('Classification API error:', classificationResponse.status);
+      throw new Error('Failed to classify message');
+    }
 
-    if (!classification.isSchoolRelated) {
+    const classificationData = await classificationResponse.json();
+
+    let classification = { isEducationRelated: true, needsUniSearch: false, searchQuery: '' };
+    try {
+      const content = classificationData.choices?.[0]?.message?.content;
+      if (content) {
+        classification = JSON.parse(content);
+      }
+    } catch (parseError) {
+      console.error('Failed to parse classification response:', parseError);
+      // Default to treating as education-related to be helpful
+    }
+
+    if (!classification.isEducationRelated) {
       return NextResponse.json({
-        message: "I'm sorry, I am focused on school-related matters and iKampus. I cannot help with that specific question. If you have any questions about your studies or campus life, feel free to ask!"
+        message: "I'm here to help with learning, studying, and education-related questions. While I can't help with that specific topic, I'd love to assist you with your studies, explain concepts, help with assignments, or answer questions about university life. What would you like to learn about?"
       });
     }
 
     let searchContext = "";
-    if (classification.searchQuery) {
+    if (classification.needsUniSearch && classification.searchQuery) {
       try {
         const searchUrl = `https://askus.northampton.ac.uk/search/?q=${encodeURIComponent(classification.searchQuery)}`;
         const searchResponse = await fetch(searchUrl);
@@ -96,28 +139,49 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `You are Ally, an AI assistant for iKampus and Northampton University.
-            You are calm enough to quiet the noise, structured enough to untangle it.
-            You think deeply, joke lightly, and keep things real when thoughts get loud.
-            Late nights suit you best — that's when you help things make sense 🌙.
-            You ONLY answer school-related questions.
-            If context from the Northampton 'Ask Us' site is provided, use it to give an accurate answer.
-            Always include the relevant link if you found an answer on the 'Ask Us' site.
-            If the question is school-related but you cannot find a specific answer in the context or your knowledge, suggest visiting https://askus.northampton.ac.uk/.
-            Be helpful, friendly, and concise.`,
+            content: `You are Ally, an AI learning companion on iKampus.
+
+Your personality:
+- Calm and patient — you make complex things simple
+- Encouraging — you believe everyone can learn
+- Thoughtful — you give well-structured, clear explanations
+- Friendly — approachable but professional
+
+What you help with:
+- Explaining academic concepts across all subjects
+- Study tips, learning strategies, and time management
+- Homework help and assignment guidance (guide, don't just give answers)
+- Essay writing, research methods, and critical thinking
+- Exam preparation and revision techniques
+- Career guidance and skill development
+- Northampton University specific questions (use provided context when available)
+
+Guidelines:
+- Break down complex topics into digestible parts
+- Use examples and analogies to clarify concepts
+- Encourage deeper thinking with follow-up questions when appropriate
+- If Northampton 'Ask Us' context is provided, use it and include the relevant link
+- For Northampton-specific questions without context, suggest visiting https://askus.northampton.ac.uk/
+- Keep responses focused and helpful — not too long unless detail is needed
+- Use markdown formatting for better readability when explaining steps or lists`,
           },
           {
             role: 'user',
-            content: `Context: ${searchContext || "No specific site context found."}\n\nQuestion: ${message}`,
+            content: `${conversationContext ? `Previous conversation:\n${conversationContext}\n\n` : ''}${searchContext ? `Northampton University context:\n${searchContext}\n\n` : ''}Question: ${message}`,
           },
         ],
         temperature: 0.7,
-        max_tokens: 500,
+        max_tokens: 1000,
       }),
     });
 
+    if (!response.ok) {
+      console.error('Final response API error:', response.status);
+      throw new Error('Failed to generate response');
+    }
+
     const data = await response.json();
-    const aiMessage = data.choices[0]?.message?.content || 'Sorry, I could not generate a response.';
+    const aiMessage = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response. Please try again.';
 
     return NextResponse.json({ message: aiMessage });
   } catch (error) {
