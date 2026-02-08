@@ -1,4 +1,5 @@
 import { NotesProvider } from "@/src/context/NotesContext";
+import { ModuleProvider } from "@/src/context/ModuleContext";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Ropa_Sans, Sora } from 'next/font/google';
@@ -9,7 +10,7 @@ const ropa = Sora({
   subsets: ['latin'],
   weight: '500',
 })
- 
+
 export const metadata: Metadata = {
   title: "Subframe Next.js Starter",
   description: "Your starter kit for integrating Subframe into Next.js",
@@ -33,7 +34,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
       <body className={ropa.className}>
         <NotesProvider>
-          {children}
+          <ModuleProvider>
+            {children}
+          </ModuleProvider>
         </NotesProvider>
       </body>
     </html>

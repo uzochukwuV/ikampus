@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { MASTER_WRAPPER } from '@/src/lib/prompts';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, history } = await request.json();
+    const { message, history, modulePrompt } = await request.json();
 
     if (!message) {
       return NextResponse.json(
@@ -17,8 +18,8 @@ export async function POST(request: NextRequest) {
     // Format conversation history for context
     const conversationContext = history?.length > 0
       ? history.map((m: { role: string; content: string }) =>
-          `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
-        ).join('\n')
+        `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
+      ).join('\n')
       : '';
 
     if (!GROQ_API_KEY) {
@@ -139,7 +140,7 @@ Only output the JSON object.`,
         messages: [
           {
             role: 'system',
-            content: `You are Ally, an AI learning companion on iKampus.
+            content: `${modulePrompt ? `${MASTER_WRAPPER}\n\n${modulePrompt}` : 'You are Ally, an AI learning companion on iKampus.'}
 
 Your personality:
 - Calm and patient — you make complex things simple

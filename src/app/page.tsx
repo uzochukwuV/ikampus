@@ -17,6 +17,8 @@ import * as SubframeCore from "@subframe/core";
 import { MyLayout } from "../ui/custom/MyLayout";
 import Image from "next/image";
 import ikampusLogo from "../assets/images/ikampus_white.png";
+import { MODULE_PROMPTS } from "../lib/prompts";
+import { useModule } from "../context/ModuleContext";
 
 interface Message {
   id: number;
@@ -52,6 +54,7 @@ function ChatGptNewChat2() {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const recognitionRef = React.useRef<SpeechRecognition | null>(null);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const { selectedModule } = useModule();
 
   // Reset messages when "new" parameter is in URL
   React.useEffect(() => {
@@ -195,6 +198,7 @@ function ChatGptNewChat2() {
         body: JSON.stringify({
           message: inputValue,
           history: conversationHistory,
+          modulePrompt: selectedModule !== "General" ? MODULE_PROMPTS[selectedModule] : undefined,
         }),
       });
 
@@ -258,6 +262,8 @@ function ChatGptNewChat2() {
               iKampus
             </span>
           </div>
+
+
 
           {/* Right side - Icons */}
           <div className="flex items-center gap-2">
@@ -438,20 +444,18 @@ function ChatGptNewChat2() {
                 <button
                   onClick={handleSendMessage}
                   disabled={inputValue.trim() === "" || isLoading}
-                  className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 apple-spring ${
-                    inputValue.trim() === "" || isLoading
-                      ? "bg-neutral-200 cursor-not-allowed"
-                      : "bg-neutral-800 hover:bg-neutral-700 shadow-md hover:shadow-lg"
+                  className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 apple-spring ${inputValue.trim() === "" || isLoading
+                    ? "bg-neutral-200 cursor-not-allowed"
+                    : "bg-neutral-800 hover:bg-neutral-700 shadow-md hover:shadow-lg"
                     }`}
                 >
                   {isLoading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <FeatherArrowUp
-                      className={`w-5 h-5 transition-transform ${
-                        inputValue.trim() === ""
-                          ? "text-neutral-400"
-                          : "text-white"
+                      className={`w-5 h-5 transition-transform ${inputValue.trim() === ""
+                        ? "text-neutral-400"
+                        : "text-white"
                         }`}
                     />
                   )}
