@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MASTER_WRAPPER } from '@/src/lib/prompts';
+import { MASTER_WRAPPER } from '../../../lib/prompts';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -79,8 +79,9 @@ Only output the JSON object.`,
     });
 
     if (!classificationResponse.ok) {
-      console.error('Classification API error:', classificationResponse.status);
-      throw new Error('Failed to classify message');
+      const errorText = await classificationResponse.text();
+      console.error('Classification API error:', classificationResponse.status, errorText);
+      throw new Error(`Failed to classify message: ${classificationResponse.status} ${errorText}`);
     }
 
     const classificationData = await classificationResponse.json();
@@ -185,10 +186,10 @@ Guidelines:
     const aiMessage = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response. Please try again.';
 
     return NextResponse.json({ message: aiMessage });
-  } catch (error) {
-    console.error('Error:', error);
+  } catch (error: any) {
+    console.error('Error in chat API:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error.message },
       { status: 500 }
     );
   }
